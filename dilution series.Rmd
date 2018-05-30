@@ -1,5 +1,49 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "rrrr"
+runtime: shiny
+output: html_document
 ---
+
+```{r}
+library(magrittr)
+library(ggplot2)
+```
+
+
+```{r, echo=FALSE}
+
+inputPanel(
+
+  numericInput("concentration", "Bacteria (CFU/ml):", 5000000, min = 1, max = 1000000000000),
+  numericInput("volume", "Dilution volume (ml)", 0.1, min = 0.001, max = 1000000000000),
+  numericInput("spot_volume", "Spot volume (ml)", 0.02, min = 0.001, max = 1)
+  
+)
+
+
+renderPlot({
+  
+  current_concentration<-input$concentration
+  current_n<-current_concentration*input$volume
+  current_colonies<-current_concentration*input$spot_volume
+  
+  series<-data.frame("number of dilutions"=0,"colonies on plate"=current_colonies)
+  
+  for (i in 1:12){
+    current_concentration<-rbinom(1,current_n,0.1) %>% 
+      sum() %>% 
+      divide_by(input$volume)
+    current_n<-current_concentration*input$volume
+    current_colonies<-current_concentration*input$spot_volume
+    series<-rbind(series,data.frame("number of dilutions"=i,"colonies on plate"=current_colonies))
+  }
+  
+  ggplot(series,aes(x=number.of.dilutions,y=colonies.on.plate))+
+    geom_col()+
+    scale_y_log10()
+  
+  
+  
+})
+```
 
