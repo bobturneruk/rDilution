@@ -23,6 +23,8 @@ inputPanel(
 
 renderPlot({
   
+  set.seed(1)
+  
   current_concentration<-input$concentration
   current_n<-current_concentration*input$volume
   current_colonies<-current_concentration*input$spot_volume
